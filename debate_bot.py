@@ -8,18 +8,22 @@ warnings.filterwarnings("ignore")
 class DebateMentor:
     def __init__(self):
         """Initialize the Debate Mentor with lightweight models."""
+        self.text_generator = None
         try:
-            # Use a lightweight text generation model
+            # Try to use a lightweight text generation model
+            from transformers import pipeline
             self.text_generator = pipeline(
                 "text-generation",
                 model="microsoft/DialoGPT-small",
                 tokenizer="microsoft/DialoGPT-small",
-                pad_token_id=50256
+                pad_token_id=50256,
+                device=-1  # Force CPU usage
             )
-        except:
+        except Exception as e:
             # Fallback to rule-based generation if model fails
-            self.text_generator = None
+            print(f"Model loading failed: {e}")
             print("Using rule-based text generation as fallback")
+            self.text_generator = None
         
         # Define logical fallacies patterns
         self.fallacy_patterns = {
